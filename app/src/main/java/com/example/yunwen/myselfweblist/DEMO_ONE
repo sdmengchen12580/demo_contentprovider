@@ -1,0 +1,92 @@
+1.第一个简单的demo（调用contentprovider）
+在其他的项目运行
+package com.example.yunwen.textcontentprovider;
+
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    /**后面有个斜杠*/
+    ContentResolver contentResolver;
+    Uri uri = Uri.parse("content://com.example.yunwen.myselfweblist.FirstProvider/");
+    Button bt_query,bt_insert,bt_update, bt_delect;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initView();
+    }
+
+    private void initView() {
+        contentResolver = getContentResolver();
+        bt_query  = (Button) findViewById(R.id.button_query);
+        bt_insert = (Button) findViewById(R.id.button_insert);
+        bt_update = (Button) findViewById(R.id.button_uodate);
+        bt_delect = (Button) findViewById(R.id.button_delect);
+        bt_query.setOnClickListener(this);
+        bt_insert.setOnClickListener(this);
+        bt_update.setOnClickListener(this);
+        bt_delect.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.button_query:
+                con_query();
+                break;
+            case R.id.button_insert:
+                con_insert();
+                break;
+            case R.id.button_uodate:
+                con_update();
+                break;
+            case R.id.button_delect:
+                con_delect();
+                break;
+        }
+    }
+
+    /**调用contentresolver的query方法，实际返回对应uri的contentprovider的query方法的（返回值）*/
+    public void con_query(){
+        Cursor cursor = contentResolver.query(uri, null, "query_where", null, null);
+        Toast.makeText(this, "查询内容："+cursor, Toast.LENGTH_SHORT).show();
+    }
+
+    /**实际返回对应uri的insert方法的返回值*/
+    public void con_insert(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name","mengchen");
+        Uri newUri = contentResolver.insert(uri, contentValues);
+        Toast.makeText(this, "插入值的uri为："+newUri, Toast.LENGTH_SHORT).show();
+    }
+
+    /**返回对应uri的update方法的返回值*/
+    public void con_update(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("age", 23);
+        int count = contentResolver.update(uri, contentValues, "update_where", null);
+        Toast.makeText(this, "更新的记录为："+count, Toast.LENGTH_SHORT).show();
+    }
+
+    /**返回对应uri的delect方法的返回值*/
+    public void con_delect(){
+        int count = contentResolver.delete(uri, "delect_where", null);
+      Toast.makeText(this, "删除的记录为："+count, Toast.LENGTH_SHORT).show();
+    }
+
+
+
+
+
+
+}
